@@ -45,7 +45,7 @@ var test = [12, 929, 11, 3, 199, 1000, 7, 1, 24, 37, 4,
     6, 109, 20, 58, 139, 59, 3, 1, 139
 ];
 
-test.forEach(function(number/*variable*/, index/*index of said variable*/, theArray/*the whole array itself*/){
+test.forEach(function(number/*variable*/, index/*index of said variable*/){
     if(number % 3 === 0){
         test[index] = number + 100;
     }
