@@ -1,17 +1,10 @@
 "use strict";
 
-function something(){
-	window.console.log("hello");
+let Pizza =  function(price, size, ...ingredients){
+	this.price = price;
+	this.size = size;
+	this.ingredients = ingredients;
 }
 
-var anotherThing = function(){
-	window.console.log("hello again");
-};
-
-var thirdThing = function thirdThing(first, ...rest){
-	window.console.log(first, rest);
-};
-
-something();
-anotherThing();
-thirdThing("one", 2, 3, 4, 5, 6);
+let Pizza1 = new Pizza(3500, '12.5"',"peperoni","cheese");
+let Pizza2 = new Pizza(2500, '15"', "ananas", "skinka", "cheese");
