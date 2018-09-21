@@ -235,7 +235,6 @@ function animation() {
             size
         );
         balls.push(ball);
-        console.log(balls)
     }
 
     for(let currentBall of balls) {
