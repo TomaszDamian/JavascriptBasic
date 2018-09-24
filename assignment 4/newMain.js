@@ -215,12 +215,17 @@ function ClearCanvas(){
     painter.clearRect(0,0,width,height);
 }
 
-let time = 0;
+let timeToSpawn = 0;
+let totalTime = 0;
 
 setInterval(function(){SecondPassed();}, 1000)
 
 let SecondPassed = function(){
-    time ++;
+    timeToSpawn ++;
+    if(User.life > 0){
+        totalTime ++;
+        document.getElementById("ScoreContainer").innerHTML = "Time survived: " + totalTime;
+    }
 }
 
 let balls = [];
@@ -231,6 +236,7 @@ let User = new Player(
     5,
     'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')',
     4,
+    5
 )
 
 let size = random(10,20);
@@ -256,8 +262,8 @@ function animation() {
     if(User.life > 0){
         painter.fillStyle = 'rgba(255,255,255,0.25)';
         painter.fillRect(0,0,width,height);
-        if(time >= 5 ){
-            time = 0;
+        if(timeToSpawn >= 1 ){
+            timeToSpawn = 0;
             let size = random(10,20);
             let ball = new Ball(
                 // ball position always drawn at least one ball width
