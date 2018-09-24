@@ -100,12 +100,15 @@ class Ball extends Shape{
 }
 
 class Player{
-    constructor(x , y, size, color, speed){
+    constructor(x , y, size, color, speed, life = 3){
         this.x = x;
         this.y = y;
         this.size = size;
         this.color = color;
+        this.InvertedColor = invert(color);
         this.speed = speed;
+        this.life = life;
+        this.dashAvalible = true;
         this.moveLeft = false;
         this.moveRight = false;
         this.moveUp = false;
@@ -113,8 +116,11 @@ class Player{
     }
     draw(){
         painter.beginPath();
-        painter.strokeStyle = this.color;
         painter.lineWidth = 3;
+        painter.fillStyle = this.color;
+        painter.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+        painter.fill();
+        painter.strokeStyle = this.InvertedColor;
         painter.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
         painter.stroke();
     }
@@ -177,6 +183,36 @@ class Player{
             this.y += this.size;
         }
     }
+    CollisionWithOthers(){
+        for(let currentBall of balls){
+            //this is a very simple statement, if the ball that is flying around exists on screen then it should have a collision
+            if(currentBall.exists){
+                //finding coords of current ball reletive to the player circle
+                //then if the value is smaller then the player circle's width then it counts as a collision
+                //I feel like there is a way that is way simpler than this but I have no idea how to do so
+                let dx = this.x - currentBall.x;
+                let dy = this.y - currentBall.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                if(distance < this.size + currentBall.size){
+                    currentBall.exists = false;
+                    this.life --;
+                    console.log(this.life);
+                }
+            }
+        }
+    }
+}
+
+function DrawGameOver(){
+    painter.rect(0, height/2-75, width, 150);
+    painter.fillStyle = "rgba(0,0,0,0.75)"; 
+    painter.fill();
+    painter.font = "80px Arial";
+    painter.fillStyle = "red";
+    painter.fillText("You died!", width/2-160 , (height/2) + 25)
+}
+function ClearCanvas(){
+    painter.clearRect(0,0,width,height);
 }
 
 let time = 0;
@@ -194,7 +230,7 @@ let User = new Player(
     random(0,height),
     5,
     'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')',
-    4
+    4,
 )
 
 let size = random(10,20);
@@ -217,38 +253,42 @@ function animation() {
     //because it paints a layer of white on top of everythinig that has the transparency of 0.25
     //so every 4th time this runs things will just dissapear but this also makes a really nice trail effect
     //balls have to be above a ceratin speed in order for this to work properly
-    painter.fillStyle = 'rgba(255,255,255,0.25)';
-    painter.fillRect(0,0,width,height);
-
-    if(time >= 5 ){
-        time = 0;
-        let size = random(10,20);
-        let ball = new Ball(
-            // ball position always drawn at least one ball width
-            // away from the adge of the canvas, to avoid drawing errors
-            random(0 + size,width - size),
-            random(0 + size,height - size),
-            random(-7,7),
-            random(-7,7),
-            true,
-            'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')',
-            size
-        );
-        balls.push(ball);
-        console.log(balls)
-    }
-
-    for(let currentBall of balls) {
-        if(currentBall.exists) {
-        currentBall.draw();
-        currentBall.update();
-        currentBall.collisionDetect();
+    if(User.life > 0){
+        painter.fillStyle = 'rgba(255,255,255,0.25)';
+        painter.fillRect(0,0,width,height);
+        if(time >= 5 ){
+            time = 0;
+            let size = random(10,20);
+            let ball = new Ball(
+                // ball position always drawn at least one ball width
+                // away from the adge of the canvas, to avoid drawing errors
+                random(0 + size,width - size),
+                random(0 + size,height - size),
+                random(-7,7),
+                random(-7,7),
+                true,
+                'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')',
+                size
+            );
+            balls.push(ball);
         }
+
+        for(let currentBall of balls) {
+            if(currentBall.exists) {
+            currentBall.draw();
+            currentBall.update();
+            currentBall.collisionDetect();
+            }
+        }
+        User.draw();
+        User.setControls();
+        User.BorderCollision();
+        User.CollisionWithOthers();
     }
-    User.draw();
-    User.setControls();
-    User.BorderCollision();
-    
+    else{
+        ClearCanvas();
+        DrawGameOver();
+    }
     requestAnimationFrame(animation);
 }
 animation();
