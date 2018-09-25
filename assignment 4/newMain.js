@@ -196,7 +196,7 @@ class Player{
                 if(distance < this.size + currentBall.size){
                     currentBall.exists = false;
                     this.life --;
-                    console.log(this.life);
+                    document.getElementById("healthContainer").innerHTML = "lives left: " + this.life;
                 }
             }
         }
@@ -214,11 +214,24 @@ function DrawGameOver(){
 function ClearCanvas(){
     painter.clearRect(0,0,width,height);
 }
+function CreateNewBall(){
+    let size = random(10,20);
+    let ball = new Ball(
+        // ball position always drawn at least one ball width
+        // away from the adge of the canvas, to avoid drawing errors
+        random(0 + size,width - size),
+        random(0 + size,height - size),
+        random(1,7),
+        random(1,7),
+        true,
+        'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')',
+        size
+    );
+    balls.push(ball);
+}
 
 let timeToSpawn = 0;
 let totalTime = 0;
-
-setInterval(function(){SecondPassed();}, 1000)
 
 let SecondPassed = function(){
     timeToSpawn ++;
@@ -228,7 +241,11 @@ let SecondPassed = function(){
     }
 }
 
+setInterval(SecondPassed,1000);
+
 let balls = [];
+
+CreateNewBall();
 
 let User = new Player(
     random(0,width),
@@ -236,22 +253,7 @@ let User = new Player(
     5,
     'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')',
     4,
-    5
 )
-
-let size = random(10,20);
-let ball = new Ball(
-    // ball position always drawn at least one ball width
-    // away from the adge of the canvas, to avoid drawing errors
-    random(0 + size,width - size),
-    random(0 + size,height - size),
-    random(1,7),
-    random(1,7),
-    true,
-    'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')',
-    size
-);
-balls.push(ball);
 
 function animation() {
     //all this does is it paints a layer of white on top of the canvas
@@ -264,19 +266,7 @@ function animation() {
         painter.fillRect(0,0,width,height);
         if(timeToSpawn >= 1 ){
             timeToSpawn = 0;
-            let size = random(10,20);
-            let ball = new Ball(
-                // ball position always drawn at least one ball width
-                // away from the adge of the canvas, to avoid drawing errors
-                random(0 + size,width - size),
-                random(0 + size,height - size),
-                random(-7,7),
-                random(-7,7),
-                true,
-                'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')',
-                size
-            );
-            balls.push(ball);
+            CreateNewBall();
         }
 
         for(let currentBall of balls) {
@@ -294,6 +284,25 @@ function animation() {
     else{
         ClearCanvas();
         DrawGameOver();
+        window.onkeypress = function(e){
+            if(e.keyCode == 114 && User.life <= 0){
+                //resets life back to default and starts the game again
+                User.life = 3;
+                //visable counter restet
+                document.getElementById("healthContainer").innerHTML = "lives left: 3";
+                
+                //resets time
+                timeToSpawn = 0;
+                totalTime = 0;
+
+                //resets the visable counter
+                document.getElementById("ScoreContainer").innerHTML = "Time survived: 0";
+
+                //deletes everything and makes a new ball
+                balls = [];
+                CreateNewBall();
+            }
+        }
     }
     requestAnimationFrame(animation);
 }
