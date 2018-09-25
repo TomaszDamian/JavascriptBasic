@@ -4,6 +4,8 @@ let canvas = document.querySelector('canvas');
 let painter = canvas.getContext('2d');
 
 //setting up sizes
+//if the width of the window is above 700px then it will automatically be 700px
+//else it's going to take the whole width of the canvas
 if(window.innerWidth > 700){
     var width = canvas.width = 700;
 } else{ var width = canvas.width = window.innerWidth; };
@@ -11,19 +13,15 @@ let height = canvas.height = window.innerHeight;
 
 //https://gist.github.com/Xordal/9bf24bc6cbc5a39f62cd
 //used this code to make the border
-
-function rgbToHex(r, g, b) {
-    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
 function invert(rgb) {
     rgb = [].slice.call(arguments).join(",").replace(/rgb\(|\)|rgba\(|\)|\s/gi, '').split(',');
     for (var i = 0; i < rgb.length; i++) rgb[i] = (i === 3 ? 1 : 255) - rgb[i];
-    //return rgbToHex(rgb[0], rgb[1], rgb[2]);
     return 'rgb('+rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
 }
 
 //function to generate a random number from x to y
 function random(min, max){
+    //flooring a number means making the number the next whole number that is above
     var num = Math.floor(Math.random()*(max-min)) + min;
     return num;
 }
@@ -38,9 +36,11 @@ class Shape{
         this.exists = exists;
     }
 }
+
 //Ball is a shape and inherits the constructor from Shape
 class Ball extends Shape{
     constructor(x, y, velX, valY, exists, color, size){
+        //supering something means that it's using it's father's constructor
         super(x, y, velX, valY, exists);
         this.color = color;
         this.size = size;
@@ -48,11 +48,15 @@ class Ball extends Shape{
     }
     //making a draw function that draws itself
     draw(){
+        //draw itself
         painter.beginPath();
         painter.fillStyle = this.color;
+        //making the object that is about to be painted
         painter.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+        //filling said object with x color
         painter.fill();
         painter.strokeStyle = this.InvertedColor;
+        //stroking only draws the borders of object x
         painter.stroke();
     }
     //update self code
@@ -108,7 +112,7 @@ class Player{
         this.InvertedColor = invert(color);
         this.speed = speed;
         this.life = life;
-        this.dashAvalible = true;
+        //movement indicators
         this.moveLeft = false;
         this.moveRight = false;
         this.moveUp = false;
@@ -143,7 +147,8 @@ class Player{
                     break;
             }
         }
-        //detects if you let go of the key or not
+        //detects if you let go of the key or not and if so sets that variable back to false 
+        //basically if you let go the variable is false and you are no longer moving in said direction
         window.onkeyup = function(e){
             switch(e.keyCode){
                 case 65:
@@ -161,12 +166,15 @@ class Player{
             }
         }
 
+        //if x is true then you move on your x or y coord by x amount which is the player's speed value
         if(this.moveUp){this.y -= this.speed}
         if(this.moveDown){this.y += this.speed}
         if(this.moveLeft){this.x -= this.speed}
         if(this.moveRight){this.x += this.speed}
     }
     BorderCollision(){
+        //if it comes in contact with the border then it should push itself out of it
+        //basically adds their size values until they are no longer in the border
         if((this.x + this.size) >= width) {
             this.x -= this.size;
         }
@@ -175,7 +183,7 @@ class Player{
             this.x += this.size;
         }
 
-        if((this.y + this.size) >= height) {
+        if((this.y + this.size) >= height/ClosingZone) {
             this.y -= this.size;
         }
 
@@ -204,17 +212,35 @@ class Player{
 }
 
 function DrawGameOver(){
+    //drawing a simple rect across the canvas
+    painter.rect(0, height/2-75, width, 150);
+    //a is for the transparency of said color 1 being the most and 0 being the least
+    painter.fillStyle = "rgba(0,0,0,0.75)"; 
+    painter.fill();
+    //sets the style of the font
+    painter.font = "80px Arial";
+    painter.fillStyle = "red";
+    //creates and fills said text in x,y coord
+    painter.fillText("You died!", width/2-160 , (height/2) + 25)
+}
+
+function DrawVictory(){
+    //same as above
     painter.rect(0, height/2-75, width, 150);
     painter.fillStyle = "rgba(0,0,0,0.75)"; 
     painter.fill();
     painter.font = "80px Arial";
-    painter.fillStyle = "red";
-    painter.fillText("You died!", width/2-160 , (height/2) + 25)
+    painter.fillStyle = "yellow";
+    painter.fillText("You Win!", width/2-160 , (height/2) + 25)
 }
+
 function ClearCanvas(){
+    //clear rect clears everything in the canvas, makes it ready for drawing from scratch
     painter.clearRect(0,0,width,height);
 }
+
 function CreateNewBall(){
+    //simple, random the coord, random the speed at which it's going on the x and y axis and size then push it into an array full of them
     let size = random(10,20);
     let ball = new Ball(
         // ball position always drawn at least one ball width
@@ -230,10 +256,13 @@ function CreateNewBall(){
     balls.push(ball);
 }
 
+let Victory = false;
+let ClosingZone = 1;
 let timeToSpawn = 0;
 let totalTime = 0;
 
 let SecondPassed = function(){
+    //called by a setInterval which calls something every x ms, 1000 ms in this case
     timeToSpawn ++;
     if(User.life > 0){
         totalTime ++;
@@ -245,8 +274,6 @@ setInterval(SecondPassed,1000);
 
 let balls = [];
 
-CreateNewBall();
-
 let User = new Player(
     random(0,width),
     random(0,height),
@@ -255,20 +282,32 @@ let User = new Player(
     4,
 )
 
+CreateNewBall();
+
 function animation() {
     //all this does is it paints a layer of white on top of the canvas
     //created a very specific bug with my current code
     //because it paints a layer of white on top of everythinig that has the transparency of 0.25
     //so every 4th time this runs things will just dissapear but this also makes a really nice trail effect
     //balls have to be above a ceratin speed in order for this to work properly
-    if(User.life > 0){
+    if(User.life > 0 && !Victory){
+        if(height/ClosingZone <= 60){
+            Victory = true;
+        }
+        console.log(height/ClosingZone);
         painter.fillStyle = 'rgba(255,255,255,0.25)';
         painter.fillRect(0,0,width,height);
-        if(timeToSpawn >= 1 ){
+        
+        painter.rect(0,height/ClosingZone,width,3);
+        painter.fillStyle = 'red'
+        painter.fill();
+        
+        if(timeToSpawn >= 3 ){
             timeToSpawn = 0;
+            ClosingZone += 0.2;
             CreateNewBall();
         }
-
+        //calling the function with each ball
         for(let currentBall of balls) {
             if(currentBall.exists) {
             currentBall.draw();
@@ -281,9 +320,15 @@ function animation() {
         User.BorderCollision();
         User.CollisionWithOthers();
     }
+
     else{
         ClearCanvas();
-        DrawGameOver();
+        if(Victory){
+            DrawVictory();
+        }
+        else{
+            DrawGameOver();
+        }
         window.onkeypress = function(e){
             if(e.keyCode == 114 && User.life <= 0){
                 //resets life back to default and starts the game again
@@ -291,6 +336,9 @@ function animation() {
                 //visable counter restet
                 document.getElementById("healthContainer").innerHTML = "lives left: 3";
                 
+                //resetting victory state
+                Victory = false;
+
                 //resets time
                 timeToSpawn = 0;
                 totalTime = 0;
@@ -301,6 +349,9 @@ function animation() {
                 //deletes everything and makes a new ball
                 balls = [];
                 CreateNewBall();
+
+                //reset closing zone
+                ClosingZone = 1;
             }
         }
     }
