@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS Drum Kit</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+  <div class="keys">
+    <div data-key="65" class="key">
+      <kbd>A</kbd>
+      <span class="sound">clap</span>
+    </div>
+    <div data-key="83" class="key">
+      <kbd>S</kbd>
+      <span class="sound">hihat</span>
+    </div>
+    <div data-key="68" class="key">
+      <kbd>D</kbd>
+      <span class="sound">kick</span>
+    </div>
+    <div data-key="70" class="key">
+      <kbd>F</kbd>
+      <span class="sound">openhat</span>
+    </div>
+    <div data-key="71" class="key">
+      <kbd>G</kbd>
+      <span class="sound">boom</span>
+    </div>
+    <div data-key="72" class="key">
+      <kbd>H</kbd>
+      <span class="sound">ride</span>
+    </div>
+    <div data-key="74" class="key">
+      <kbd>J</kbd>
+      <span class="sound">snare</span>
+    </div>
+    <div data-key="75" class="key">
+      <kbd>K</kbd>
+      <span class="sound">tom</span>
+    </div>
+    <div data-key="76" class="key">
+      <kbd>L</kbd>
+      <span class="sound">tink</span>
+    </div>
+  </div>
+
+  <audio data-key="65" src="sounds/clap.wav"></audio>
+  <audio data-key="83" src="sounds/hihat.wav"></audio>
+  <audio data-key="68" src="sounds/kick.wav"></audio>
+  <audio data-key="70" src="sounds/openhat.wav"></audio>
+  <audio data-key="71" src="sounds/boom.wav"></audio>
+  <audio data-key="72" src="sounds/ride.wav"></audio>
+  <audio data-key="74" src="sounds/snare.wav"></audio>
+  <audio data-key="75" src="sounds/tom.wav"></audio>
+  <audio data-key="76" src="sounds/tink.wav"></audio>
+
+<script>
+	function removeTransition(e) {
+		if (e.propertyName !== 'transform') return; //ef það er ekki transformed á taginu þá er functioninu hætt
+		e.target.classList.remove('playing'); //tekur frá clasa sem heitir playing
+	}
+
+	function playSound(e) {
+		const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`); //nær í audio taggið og setur keycode á data-key
+		const key = document.querySelector(`div[data-key="${e.keyCode}"]`); //nær í div taggið og setur keycode á data-key
+		if (!audio) return; //stöðva functionið
+
+		key.classList.add('playing'); //bætir við klasa á divið sem heitir playing
+		audio.currentTime = 0; //fer aftur á byrjunina af .wav fileinu
+		audio.play();
+	}
+
+	//nær í öll tögg með key clasa og það er svo sett í array
+	const keys = Array.from(document.querySelectorAll('.key'));
+	//það er sett hlustari á öll div 
+	keys.forEach(key => key.addEventListener('transitionend', removeTransition)); //þegar transitionend er búið er removeTransition farið af stað
+	//addar listener á allan gluggan þannig að hann er alltaf að hlusta
+	window.addEventListener('keydown', playSound);
+</script>
+
+
+</body>
+</html>
