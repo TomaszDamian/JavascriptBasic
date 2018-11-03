@@ -24,4 +24,4 @@ document.getElementById('hider').onclick = ()=>{
 //3.
 //only one and two will run since the event is removed in the second line
 ```
-3.
+3. see files
