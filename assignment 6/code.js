@@ -1,15 +1,29 @@
 "use strict"
+
+//just for simplicity and if it happens to add more images
+//it will just filter those out because of the command I did on line 123
 let AllTags = [];
+//gets all the pictures into one array where it can be made from an object into a html image object
 let pictures = [];
 
+/*
+	I added this later on because I forgot you were also supposed to have a searchbar on the webapp and I'm kinda too lazy to comment it all over again
+	Basically what I did was I added 2 kinds of checks for each if statement where both have to be true for the image to appear
+	one of them is a tag check, which is taken from the buttons on top and the second kind of check is the search bar check where if the name of the image doesn't match
+	then it will not appear.
+*/ 
 function SearchNames(){
 	let AllImages = document.querySelectorAll("img");
+	let SelectedTag = document.querySelector(".is-danger");
 	for(let image of AllImages){
-		if(this.value === ""){
+		if(this.value === "" && SelectedTag.textContent === "Show All"){
+			image.hidden = false;
+		}
+		else if(this.value === "" && image.dataset.tags.includes(SelectedTag.textContent)){
 			image.hidden = false;
 		}
 		else{
-			if(image.alt.includes(this.value)){
+			if(image.alt.includes(this.value) && image.dataset.tags.includes(SelectedTag.textContent)){
 				image.hidden = false;
 			}
 			else{
@@ -36,7 +50,7 @@ function MakeActiveButton(ActiveButton){
 	}
 }
 
-function FilterOut(){
+function ButtonFilter(){
 	//basically a toggle function explained above
 	MakeActiveButton(this.textContent);
 	let PictureContainer = document.querySelectorAll("img");
@@ -115,9 +129,15 @@ for(let tag of uniqueTags){
     let button = document.createElement("button");
 	button.textContent = tag;
 	button.classList.add("button", "is-info","margin-5");
-    button.addEventListener("click", FilterOut);
+    button.addEventListener("click", ButtonFilter);
     document.getElementById("Tagdiv").appendChild(button);
 }
+
+//make sure that something is selected as a tag in the beginning
+//would be a problem if the searchbar code didn't have a is-danger class to get the tag
+//defaults to Show All
+document.querySelector("button").classList.remove("is-info");
+document.querySelector("button").classList.add("is-danger");
 
 //making the searchbar and putting it into the responding div
 let Searchbar = document.createElement("input");
