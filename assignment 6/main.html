@@ -5,29 +5,26 @@
     <meta charset="UTF-8">
     <title>Document</title>
     <style>
+    html{
+        background-color: aquamarine;
+    }
     .margin-5{
         margin: 5px;
     }
-    html, .is-flex{
-        margin: 0;
-        height: 100%;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;    
+    .Picturediv{
+        display: inline;
     }
-    #Picturediv{
-        width: 85%;
-        display: flex;
-        flex-flow: row wrap;
+    .ImgContainer{
+        display: inline;
     }
     </style>
 </head>
 <body>
-    <div class="is-flex">
+    <div class="container">
         <div id="Tagdiv"></div>
         <div id="Searchbar"></div>
-        <div id="Picturediv"></div>
+        <div id="Picturediv" class="columns"></div>
     </div>
-    <script src="code.js"></script>
+    <script src="codeRewritten.js"></script>
 </body>
 </html>
