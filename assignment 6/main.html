@@ -11,11 +11,16 @@
     .margin-5{
         margin: 5px;
     }
-    .Picturediv{
-        display: inline;
+    .container{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
     }
-    .ImgContainer{
-        display: inline;
+    #Picturediv{
+        padding: 5%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
     }
     </style>
 </head>
@@ -23,7 +28,7 @@
     <div class="container">
         <div id="Tagdiv"></div>
         <div id="Searchbar"></div>
-        <div id="Picturediv" class="columns"></div>
+        <div id="Picturediv"></div>
     </div>
     <script src="codeRewritten.js"></script>
 </body>

@@ -39,7 +39,7 @@ for (let imageData of pictures){
     
 
     ImageDiv.style.padding = "5px";
-    ImageDiv.classList.add("ImgContainer", "column")
+    ImageDiv.classList.add("ImgContainer")
     ImageDiv.appendChild(createdImage);
     ImageDiv.appendChild(ImageName);
     document.getElementById("Picturediv").appendChild(ImageDiv);
@@ -66,6 +66,7 @@ for(let ButtonData of uniqueTags){
     Button.addEventListener("click", ToggleAndFilter);
     document.getElementById("Tagdiv").appendChild(Button);
 }
+
 //I want one button to be "active"
 let FirstButton = document.querySelector("button");
 FirstButton.classList.remove("is-info");
@@ -89,34 +90,64 @@ function Filter(){
     let TagValue = document.querySelector(".is-danger").textContent;
 
     //all img tags
-    let AllImages = document.querySelectorAll("img");
+    let ImgContainer = document.querySelectorAll(".ImgContainer");
 
-    for(let OneImage of AllImages){
-        //get the image name and put it to lowercase since .includes is case sensitive
-        let ImageName = OneImage.alt;
+    for(index = 0; index < ImgContainer.length; index++){
+        //returns a array since it's getElement*s*ByTagName, can be more than one hence why the [0] is there
+        let ImageName = ImgContainer[index].getElementsByTagName("img")[0].alt;
         ImageName = ImageName.toLowerCase();
-        
-        let ImageTags = OneImage.dataset.tags;
-        
-        //show all images if both of the values are default
+
+        let ImageTags = ImgContainer[index].getElementsByTagName("img")[0].dataset.tags;
+
         if(TagValue === "show all" && SearchBarValue === ""){
-            OneImage.hidden = false;
+            ImgContainer[index].hidden = false;
         }
         //check SearchBarValue if the TagValue is default
         else if(TagValue === "show all" && ImageName.includes(SearchBarValue)){
-            OneImage.hidden = false;
+            ImgContainer[index].hidden = false;
         }
         //checks tag value if the SearchBarValue is default
         else if(ImageTags.includes(TagValue) && SearchBarValue === ""){
-            OneImage.hidden = false;
+            ImgContainer[index].hidden = false;
         }
         //checks for TagValue and ImageName
         else if(ImageTags.includes(TagValue) && ImageName.includes(SearchBarValue)){
-            OneImage.hidden = false;
+            ImgContainer[index].hidden = false;
         }
         //if all checks fail then you hide the image
         else{
-            OneImage.hidden = true;
+            ImgContainer[index].hidden = true;
         }
     }
+    
+    /*for(let OneImage of AllImages){
+        for(let ImageData of OneImage.childNodes){
+            //get the image name and put it to lowercase since .includes is case sensitive
+            let ImageName = ImageData.firstChild.alt;
+            ImageName = ImageName.toLowerCase();
+            
+            let ImageTags = ImageData.firstChild.dataset.tags;
+            
+            //show all images if both of the values are default
+            if(TagValue === "show all" && SearchBarValue === ""){
+                ImageData.hidden = false;
+            }
+            //check SearchBarValue if the TagValue is default
+            else if(TagValue === "show all" && ImageName.includes(SearchBarValue)){
+                ImageData.hidden = false;
+            }
+            //checks tag value if the SearchBarValue is default
+            else if(ImageTags.includes(TagValue) && SearchBarValue === ""){
+                ImageData.hidden = false;
+            }
+            //checks for TagValue and ImageName
+            else if(ImageTags.includes(TagValue) && ImageName.includes(SearchBarValue)){
+                ImageData.hidden = false;
+            }
+            //if all checks fail then you hide the image
+            else{
+                ImageData.hidden = true;
+            }
+        }
+    }*/
 }
