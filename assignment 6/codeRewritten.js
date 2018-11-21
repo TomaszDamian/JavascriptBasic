@@ -119,35 +119,4 @@ function Filter(){
             ImgContainer[index].hidden = true;
         }
     }
-    
-    /*for(let OneImage of AllImages){
-        for(let ImageData of OneImage.childNodes){
-            //get the image name and put it to lowercase since .includes is case sensitive
-            let ImageName = ImageData.firstChild.alt;
-            ImageName = ImageName.toLowerCase();
-            
-            let ImageTags = ImageData.firstChild.dataset.tags;
-            
-            //show all images if both of the values are default
-            if(TagValue === "show all" && SearchBarValue === ""){
-                ImageData.hidden = false;
-            }
-            //check SearchBarValue if the TagValue is default
-            else if(TagValue === "show all" && ImageName.includes(SearchBarValue)){
-                ImageData.hidden = false;
-            }
-            //checks tag value if the SearchBarValue is default
-            else if(ImageTags.includes(TagValue) && SearchBarValue === ""){
-                ImageData.hidden = false;
-            }
-            //checks for TagValue and ImageName
-            else if(ImageTags.includes(TagValue) && ImageName.includes(SearchBarValue)){
-                ImageData.hidden = false;
-            }
-            //if all checks fail then you hide the image
-            else{
-                ImageData.hidden = true;
-            }
-        }
-    }*/
 }
