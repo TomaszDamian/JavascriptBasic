@@ -41,13 +41,13 @@ export default {
         float: left;
     }
     .Name{
-        position: fixed;
+        position: absolute;
         left: 0%;
         display: inline;
         top: 11px;
     }
     .ReloadButton{
-        position: fixed;
+        position: absolute;
         right: 0%;
         height: 60px;
     }
