@@ -1,31 +1,32 @@
 <template>
     <div id="WholeApp">
-        <ReloadHeader></ReloadHeader>
-        <gallery :images="AllConcerts" :index="index" @close="index=null"></gallery>
-        <div
-        class="image"
-        v-for="(image,imageIndex) in AllConcerts"
-        :key="imageIndex"
-        :style="{ backgroundImage: 'url(' + image.imageSource + ')', width: '280px', height: '200px' }"
-        >
-        <p class="OnImageText">{{ image.eventDateName }}</p>
+        <div class="HeaderBlue">
+            <h3 class="Name title">apis.is/Concerts</h3>
+            <button class="button ReloadButton">press me to refresh</button>
+        </div>
+        <div class="row">
+            <div class="column" v-for="(Concert, index) in AllConcerts" :key="index">
+                <div class="ConcertInfo">
+                    <img :src="Concert.imageSource" alt="">
+                    <div class="displayInline">
+                        <p>
+                            {{ Concert.eventDateName }} <br>
+                            {{ Concert.dateOfShow }}    <br>
+                            {{ Concert.eventHallName }}
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 <script>
-    import ReloadHeader from "./Header.vue"
     import axios from "axios"
-    import VueGallery from "vue-gallery";
     export default {
         name: "ConcertDisplay",
         props:{
             AllConcerts: String,
-            ConcertImages: [],
             index: null,
-        },
-        components:{
-            ReloadHeader,
-            'gallery':VueGallery,
         },
         mounted(){
             var self = this;
@@ -36,6 +37,12 @@
             .catch((error) => {
                 window.console.log(error);
             });
+
+        },
+        methods:{
+            SortByName(){
+                
+            }
         },
     }
 </script>
@@ -45,18 +52,42 @@
     margin-top: 60px;
     padding: 0;
 }
-.image {
-    float: left;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center center;
-    -webkit-text-stroke: 0.4px white;
-    font-size: 25px;
-    border: 1px solid #ebebeb;
-    margin: 5px;
+.ConcertInfo{
+    display: flex;
 }
-.OnImageText{
-    margin-top: 130px;
+.displayInline{
+    display: inline;
+}
+.column {
+    float: left;
+    width: 50%;
+    padding: 10px;
+}
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+.HeaderBlue{
+    position: absolute;
+    left: 0%;
+    top: 0%;
+    width: 100%;
+    height: 60px;
+    background: aquamarine;
+    float: left;
+}
+.Name{
+    position: absolute;
+    left: 0%;
+    display: inline;
+    top: 11px;
+}
+.ReloadButton{
+    position: absolute;
+    right: 0%;
+    height: 60px;
 }
 </style>
 
